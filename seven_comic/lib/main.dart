@@ -1,41 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:sevencomic/manager/provider_manager.dart';
+import 'package:sevencomic/manager/router_manager.dart';
+import 'package:sevencomic/manager/storage_manager.dart';
 import 'package:sevencomic/net/api_response.dart';
 import 'package:sevencomic/net/http_utils.dart';
 import 'package:sevencomic/repository.dart';
+import 'package:sevencomic/view_model/theme_model.dart';
 
 import 'entity/index_entity.dart';
 
-void main() {
+void main() async {
   HttpUtils.init(baseUrl: "http://v3api.dmzj.com/");
+  Provider.debugCheckInvalidValueType = null;
+  WidgetsFlutterBinding.ensureInitialized();
+  await StorageManager.init();
   runApp(MyApp());
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.light));
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return MultiProvider(
+      providers: providers,
+      child: Consumer<ThemeModel>(
+          builder: (context, themeModel, child) {
+            return MaterialApp(
+              theme: themeModel.themeData(),
+              darkTheme: themeModel.themeData(platformDarkMode: true),
+              onGenerateRoute: Router.generateRoute,
+              initialRoute: RouterName.main,
+            );
+          }
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
+
+//MaterialApp(
+//      title: 'Flutter Demo',
+//      theme: ThemeData(
+//        primarySwatch: Colors.blue,
+//        visualDensity: VisualDensity.adaptivePlatformDensity,
+//      ),
+//      home: MyHomePage(title: 'Flutter Demo Home Page'),
+//    );
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -66,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
-      getData();
+//      getData();
     });
   }
 
