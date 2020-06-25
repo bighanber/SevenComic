@@ -4,17 +4,18 @@ import 'package:sevencomic/widget/image_colors.dart';
 
 class BannerImage extends StatelessWidget {
   final String url;
+  final double bannerHeight;
   final BoxFit fit;
 
-  BannerImage(this.url, {this.fit: BoxFit.fill});
+  BannerImage(this.url, this.bannerHeight, {this.fit: BoxFit.fill});
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       child: ImageColors(
-        title: 'title',
-          image: NetworkImage(url, headers: {"Referer": "http://v3api.dmzj.com/"}),
-        imageSize: Size(256.0, 170.0),
+        image: NetworkImage(url, headers: {"Referer": "http://v3api.dmzj.com/"}),
+        imageSize: Size(MediaQuery.of(context).size.width, bannerHeight),
       ),
     );
   }

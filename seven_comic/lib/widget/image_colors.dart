@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'dart:math' as math;
 
-const Color _kBackgroundColor = Color(0xffa0a0a0);
+ Color _kBackgroundColor = Color(0xffa0a0a0);
 const Color _kSelectionRectangleBackground = Color(0x15000000);
 const Color _kSelectionRectangleBorder = Color(0x80000000);
 const Color _kPlaceholderColor = Color(0x80404040);
 
 class ImageColors extends StatefulWidget {
-
-  final String title;
 
   final ImageProvider image;
 
@@ -17,7 +15,6 @@ class ImageColors extends StatefulWidget {
 
   const ImageColors({
     Key key,
-    this.title,
     this.image,
     this.imageSize,
   }) : super(key: key);
@@ -44,6 +41,7 @@ class _ImageColorsState extends State<ImageColors> {
   void initState() {
     super.initState();
     region = Offset.zero & widget.imageSize;
+//    print("${widget.imageSize.width} - ${widget.imageSize.height}");
     _updatePaletteGenerator(region);
   }
 
@@ -54,7 +52,9 @@ class _ImageColorsState extends State<ImageColors> {
       region: newRegion,
       maximumColorCount: 20,
     );
-    setState(() {});
+    setState(() {
+      _kBackgroundColor = paletteGenerator.dominantColor?.color;
+    });
   }
 
   void _onPanDown(DragDownDetails details) {
@@ -101,48 +101,17 @@ class _ImageColorsState extends State<ImageColors> {
     return Scaffold(
       backgroundColor: _kBackgroundColor,
       appBar: AppBar(
-        title: Text(widget.title),
+        backgroundColor: _kBackgroundColor,
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-              padding: const EdgeInsets.all(20.0),
-            child: GestureDetector(
-              onPanDown: _onPanDown,
-              onPanUpdate: _onPanUpdate,
-              onPanCancel: _onPanCancel,
-              onPanEnd: _onPanEnd,
-              child: Stack(
-                children: [
-                  Image(
-                    key: imageKey,
-                    image: widget.image,
-                    width: widget.imageSize.width,
-                    height: widget.imageSize.height,
-                  ),
-
-                  Positioned.fromRect(
-                      rect: dragRegion ?? region ?? Rect.zero,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: _kSelectionRectangleBackground,
-                          border: Border.all(
-                            width: 1.0,
-                            color: _kSelectionRectangleBorder,
-                            style: BorderStyle.solid
-                          ),
-                        ),
-                      ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          PaletteSwatches(generator: paletteGenerator,)
-        ],
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: Image(
+          key: imageKey,
+          image: widget.image,
+          width: widget.imageSize.width,
+          height: widget.imageSize.height,
+          fit: BoxFit.fill,
+        ),
       ),
     );
   }
