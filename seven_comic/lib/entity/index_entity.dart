@@ -1,22 +1,6 @@
 import 'package:sevencomic/generated/json/base/json_convert_content.dart';
 import 'package:sevencomic/generated/json/base/json_filed.dart';
 
-class IndexList {
-	final List<IndexEntity> index;
-
-	IndexList({this.index});
-
-	factory IndexList.fromJson(List<dynamic> parsedJson) {
-
-		List<IndexEntity> list = new List<IndexEntity>();
-		list = parsedJson.map((i)=>IndexEntity().fromJson(i)).toList();
-
-		return new IndexList(
-				index: list
-		);
-	}
-}
-
 class IndexEntity with JsonConvert<IndexEntity> {
 	@JSONField(name: "category_id")
 	double categoryId;

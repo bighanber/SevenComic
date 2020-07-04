@@ -10,6 +10,7 @@ import 'package:sevencomic/repository.dart';
 import 'package:sevencomic/view_model/theme_model.dart';
 
 import 'entity/index_entity.dart';
+import 'entity/index_recommend.dart';
 
 void main() async {
   HttpUtils.init(baseUrl: "http://v3api.dmzj.com/");
