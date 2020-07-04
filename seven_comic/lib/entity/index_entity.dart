@@ -17,6 +17,6 @@ class IndexData with JsonConvert<IndexData> {
 	double type;
 	String url;
 	@JSONField(name: "obj_id")
-	double objId;
+	int objId;
 	String status;
 }

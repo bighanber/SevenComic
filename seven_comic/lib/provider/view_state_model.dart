@@ -57,7 +57,7 @@ class ViewStateModel with ChangeNotifier {
     viewState = ViewState.empty;
   }
 
-  void setError(e, stackTrace, {String message}) {
+  void setError(e, {String message}) {
     ViewStateErrorType errorType = ViewStateErrorType.defaultError;
     viewState = ViewState.error;
     _viewStateError = ViewStateError(

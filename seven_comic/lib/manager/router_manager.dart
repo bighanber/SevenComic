@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sevencomic/ui/detail/comic_detail_page.dart';
 import 'package:sevencomic/ui/main/main_navigator.dart';
 import 'package:sevencomic/widget/page_route_anim.dart';
 
 class RouterName {
   static const String main = 'main';
+  static const String comicDetail = "comicDetail";
 }
 
 class Router {
@@ -12,6 +14,9 @@ class Router {
     switch (settings.name) {
       case RouterName.main:
         return NoAnimRouteBuilder(MainNavigator());
+
+      case RouterName.comicDetail:
+        return CupertinoPageRoute(builder: (_) => ComicDetailPage(settings.arguments as int));
 
       default:
         return CupertinoPageRoute(

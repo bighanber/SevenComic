@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sevencomic/entity/index_entity.dart';
+import 'package:sevencomic/manager/router_manager.dart';
 
 class RecommendItemWidget extends StatelessWidget {
   IndexEntity data;
@@ -71,7 +72,9 @@ class RecommendSubItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).pushNamed(RouterName.comicDetail, arguments: data.objId);
+      },
       child: Container(
         child: (sort != 5 && sort != 9 && sort != 11)
             ? Column(
