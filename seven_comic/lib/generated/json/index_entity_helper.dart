@@ -47,7 +47,7 @@ indexDataFromJson(IndexData data, Map<String, dynamic> json) {
 		data.url = json['url']?.toString();
 	}
 	if (json['obj_id'] != null) {
-		data.objId = json['obj_id'];
+		data.objId = json['obj_id']?.toInt();
 	}
 	if (json['status'] != null) {
 		data.status = json['status']?.toString();
