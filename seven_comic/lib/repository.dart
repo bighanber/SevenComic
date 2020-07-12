@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:sevencomic/entity/index_entity.dart';
+import 'package:sevencomic/entity/hot_search.dart';
 import 'package:sevencomic/entity/index_rank.dart';
-import 'package:sevencomic/entity/index_rank_entity.dart';
 import 'package:sevencomic/entity/index_update.dart';
-import 'package:sevencomic/ui/rank/comic_rank_page.dart';
+import 'package:sevencomic/entity/search_result.dart';
 
 import 'entity/comic_detail_entity.dart';
 import 'entity/index_recommend.dart';
@@ -47,6 +46,26 @@ class Repository {
     try {
       final response = await HttpUtils.get("latest/100/$page.json");
       var data = IndexUpdateList.fromJson(response);
+      return ApiResponse.completed(data);
+    } on DioError catch (e) {
+      return ApiResponse.error(e.error);
+    }
+  }
+
+  static Future<ApiResponse<HotSearchList>> getHotSearch() async {
+    try {
+      final response = await HttpUtils.get("search/hot/0.json");
+      var data = HotSearchList.fromJson(response);
+      return ApiResponse.completed(data);
+    } on DioError catch (e) {
+      return ApiResponse.error(e.error);
+    }
+  }
+
+  static Future<ApiResponse<SearchResultList>> getSearchResult(String keyword, int page) async {
+    try {
+      final response = await HttpUtils.get("search/show/0/$keyword/$page.json");
+      var data = SearchResultList.fromJson(response);
       return ApiResponse.completed(data);
     } on DioError catch (e) {
       return ApiResponse.error(e.error);

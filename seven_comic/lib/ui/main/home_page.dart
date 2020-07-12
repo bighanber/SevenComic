@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sevencomic/ui/rank/home_ranking_page.dart';
 import 'package:sevencomic/ui/main/home_recommend_page.dart';
+import 'package:sevencomic/ui/search/search_delegate.dart';
 import 'package:sevencomic/ui/update/home_update_page.dart';
 import 'package:sevencomic/util/status_bar_utils.dart';
 
@@ -69,15 +70,22 @@ class _HomePage extends State<HomePage> {
                                         text: titles[index],
                                       ))),
                         ),
-                        Container(
-                          padding: EdgeInsets.fromLTRB(10, 4, 54, 4),
-                          decoration: BoxDecoration(
-                              color: Colors.white70,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(14.0))),
-                          child: Text(
-                            "搜索",
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                        InkWell(
+                          onTap: () {
+                            showSearch(
+                                context: context,
+                                delegate: DefaultSearchDelegate());
+                          },
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(10, 4, 54, 4),
+                            decoration: BoxDecoration(
+                                color: Colors.white70,
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(14.0))),
+                            child: Text(
+                              "搜索",
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
                           ),
                         ),
                         Container(
