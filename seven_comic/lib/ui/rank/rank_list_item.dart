@@ -15,7 +15,7 @@ class RankItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed(RouterName.comicDetail, arguments: data.comicId);
+        Navigator.of(context).pushNamed(RouterName.comicDetail, arguments: int.parse(data.comicId));
       },
       child: Container(
         height: 140,

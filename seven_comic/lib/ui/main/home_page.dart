@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sevencomic/ui/main/home_ranking_page.dart';
+import 'package:sevencomic/ui/rank/home_ranking_page.dart';
 import 'package:sevencomic/ui/main/home_recommend_page.dart';
-import 'package:sevencomic/ui/main/home_update_page.dart';
+import 'package:sevencomic/ui/update/home_update_page.dart';
 import 'package:sevencomic/util/status_bar_utils.dart';
 
 List<Widget> pages = <Widget>[

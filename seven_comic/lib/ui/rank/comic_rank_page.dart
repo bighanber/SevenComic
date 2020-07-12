@@ -15,7 +15,6 @@ class ComicRankPage extends StatefulWidget {
   }
 }
 
-//ComicRankModel
 class _ComicRankPage extends State<ComicRankPage>
     with AutomaticKeepAliveClientMixin {
   @override

@@ -32,6 +32,7 @@ class _HomeRankingPage extends State<HomeRankingPage> {
           }
           return Container(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TabBar(
                   indicatorColor: Color(0xff333333),
