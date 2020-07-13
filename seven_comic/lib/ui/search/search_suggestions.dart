@@ -75,29 +75,37 @@ class _SearchHistoryWidgetState extends State<SearchHistoryWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "搜索历史",
-                style: TextStyle(fontSize: 12, color: Color(0xff666666)),
-              ),
-              Consumer<SearchHistoryModel>(
-                builder: (context, model, child) => IconButton(
-                    iconSize: 16,
-                    color: Color(0xff666666),
-                    icon: Icon(Icons.delete_outline),
-                    onPressed: () {
-                      model.clearHistory();
-                    }),
-              ),
-            ],
+          padding: EdgeInsets.only(left: 5, top: 10),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 32,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "搜索历史",
+                  style: TextStyle(fontSize: 12, color: Color(0xff666666)),
+                ),
+                Consumer<SearchHistoryModel>(
+                  builder: (context, model, child) => IconButton(
+                      iconSize: 16,
+                      color: Color(0xff666666),
+                      icon: Icon(Icons.delete_outline),
+                      onPressed: () {
+                        model.clearHistory();
+                      }),
+                ),
+              ],
+            ),
           ),
         ),
         SearchSuggestionStateWidget<SearchHistoryModel, String>(
           builder: (context, item) => ActionChip(
-              label: Text(item),
+              label: Text(item, style: TextStyle(fontSize: 12, color: Color(0xff333333)),),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              padding: EdgeInsets.all(0),
               onPressed: () {
                 widget.delegate.query = item;
                 widget.delegate.showResults(context);
@@ -134,7 +142,7 @@ class _SearchHotWidgetState extends State<SearchHotWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 5),
+          padding: EdgeInsets.only(left: 5, top: 5, bottom: 10),
           child: Text(
             "热门搜索",
             style: TextStyle(fontSize: 12, color: Color(0xff666666)),

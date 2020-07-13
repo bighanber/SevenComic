@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sevencomic/provider/provider_widget.dart';
 import 'package:sevencomic/provider/view_state_widget.dart';
+import 'package:sevencomic/ui/search/search_list_item.dart';
 import 'package:sevencomic/view_model/search_model.dart';
 
 class SearchPage extends StatelessWidget {
@@ -33,7 +34,7 @@ class SearchPage extends StatelessWidget {
             child: ListView.builder(
                 itemCount: model.list.length,
                 itemBuilder: (context, index) {
-                  return Text("haha");
+                  return SearchItemWidget(model.list[index]);
                 }
             ),
           );

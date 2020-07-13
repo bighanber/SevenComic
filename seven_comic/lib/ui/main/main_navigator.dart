@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sevencomic/ui/main/comic_news_page.dart';
+import 'package:sevencomic/ui/news/comic_news_page.dart';
 import 'package:sevencomic/ui/main/comic_shelf_page.dart';
 import 'package:sevencomic/ui/main/home_page.dart';
 

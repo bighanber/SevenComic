@@ -71,7 +71,7 @@ class DetailHeadWidget extends StatelessWidget {
         Align(
           alignment: Alignment.bottomLeft,
           child: Container(
-            height: 50,
+            height: 60,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -130,7 +130,7 @@ class DetailChapterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ComicDetailModel model = Provider.of(context);
-    return Padding(
+    return (model.detail.chapters.length > 0) ? Padding(
       padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +167,7 @@ class DetailChapterWidget extends StatelessWidget {
               }),
         ],
       ),
-    );
+    ) : Container();
   }
 }
 

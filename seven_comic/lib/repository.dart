@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:sevencomic/entity/comic_news.dart';
+import 'package:sevencomic/entity/comic_news_header_entity.dart';
 import 'package:sevencomic/entity/hot_search.dart';
 import 'package:sevencomic/entity/index_rank.dart';
 import 'package:sevencomic/entity/index_update.dart';
@@ -66,6 +68,26 @@ class Repository {
     try {
       final response = await HttpUtils.get("search/show/0/$keyword/$page.json");
       var data = SearchResultList.fromJson(response);
+      return ApiResponse.completed(data);
+    } on DioError catch (e) {
+      return ApiResponse.error(e.error);
+    }
+  }
+
+  static Future<ApiResponse<ComicNewsHeaderEntity>> getNewsHeader() async {
+    try {
+      final response = await HttpUtils.get("v3/article/recommend/header.json");
+      var data = ComicNewsHeaderEntity().fromJson(response);
+      return ApiResponse.completed(data);
+    } on DioError catch (e) {
+      return ApiResponse.error(e.error);
+    }
+  }
+
+  static Future<ApiResponse<ComicNewsList>> getNews(int page) async {
+    try {
+      final response = await HttpUtils.get("v3/article/list/0/2/$page.json");
+      var data = ComicNewsList.fromJson(response);
       return ApiResponse.completed(data);
     } on DioError catch (e) {
       return ApiResponse.error(e.error);
