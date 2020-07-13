@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sevencomic/helper/theme_helper.dart';
 import 'package:sevencomic/ui/search/search_page.dart';
 import 'package:sevencomic/ui/search/search_suggestions.dart';
 import 'package:sevencomic/view_model/search_model.dart';
@@ -9,18 +10,23 @@ class DefaultSearchDelegate extends SearchDelegate {
   SearchHotModel _searchHotModel = SearchHotModel();
 
   @override
+  String get searchFieldLabel => "请输入搜索内容";
+
+//  @override
+//  TextStyle get searchFieldStyle => TextStyle(fontSize: 20);
+
+  @override
   ThemeData appBarTheme(BuildContext context) {
     var theme = Theme.of(context);
     return super.appBarTheme(context).copyWith(
-          primaryColor: theme.scaffoldBackgroundColor,
-          primaryColorBrightness: theme.brightness,
-          inputDecorationTheme: InputDecorationTheme(
-            labelStyle: TextStyle(fontSize: 12),
-            hintStyle: TextStyle(fontSize: 12, color: Color(0xff666666)),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-
+          primaryColor: theme.primaryColor,
+          primaryColorBrightness: theme.primaryColorBrightness,
+          primaryIconTheme: theme.primaryIconTheme,
+          textTheme: theme.primaryTextTheme.copyWith(
+              headline6: TextStyle(fontSize: 14, color: Colors.white)),
+          inputDecorationTheme:
+              ThemeHelper.inputDecorationTheme(theme).copyWith(
+            hintStyle: TextStyle(fontSize: 14, color: Color(0xffcccccc)),
           ),
         );
   }
@@ -45,7 +51,8 @@ class DefaultSearchDelegate extends SearchDelegate {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-        icon: Icon(Icons.arrow_back),
+        icon: AnimatedIcon(
+            icon: AnimatedIcons.menu_arrow, progress: transitionAnimation),
         onPressed: () {
           close(context, null);
         });
