@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sevencomic/entity/comic_news_entity.dart';
@@ -17,8 +18,10 @@ class ComicNewsPage extends StatefulWidget {
   }
 }
 
-class _ComicNewsPage extends State<ComicNewsPage> with AutomaticKeepAliveClientMixin  {
+class _ComicNewsPage extends State<ComicNewsPage>
+    with AutomaticKeepAliveClientMixin {
   var bannerHeight;
+
   @override
   Widget build(BuildContext context) {
     bannerHeight = MediaQuery.of(context).size.width * 0.5;
@@ -31,36 +34,30 @@ class _ComicNewsPage extends State<ComicNewsPage> with AutomaticKeepAliveClientM
       },
       builder: (context, headModel, newsModel, child) {
         return Scaffold(
-          body: SmartRefresher(
-            controller: newsModel.refreshController,
-            enablePullUp: true,
-            onRefresh: newsModel.refresh,
-            onLoading: newsModel.loadMore,
-            child: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  brightness: Theme.of(context).brightness == Brightness.light &&
-                      newsModel.isBusy
-                      ? Brightness.light
-                      : Brightness.dark,
-                  actions: [],
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Container(
-                      height: bannerHeight,
-                      child: NewsBannerWidget(bannerHeight),
-                    ),
-                    centerTitle: true,
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                brightness: Theme.of(context).brightness == Brightness.light &&
+                        newsModel.isBusy
+                    ? Brightness.light
+                    : Brightness.dark,
+                actions: [],
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    height: bannerHeight,
+                    child: NewsBannerWidget(bannerHeight),
                   ),
-                  expandedHeight: bannerHeight,
-                  pinned: true,
+                  centerTitle: true,
                 ),
-                if (newsModel.isEmpty)
-                  SliverToBoxAdapter(
-                    child: Text("empty"),
-                  ),
-                NewsListWidget(),
-              ],
-            ),
+                expandedHeight: bannerHeight,
+                pinned: true,
+              ),
+              if (newsModel.isEmpty)
+                SliverToBoxAdapter(
+                  child: Text("empty"),
+                ),
+              NewsListWidget(),
+            ],
           ),
         );
       },
@@ -72,7 +69,6 @@ class _ComicNewsPage extends State<ComicNewsPage> with AutomaticKeepAliveClientM
 }
 
 class NewsBannerWidget extends StatelessWidget {
-
   var bannerHeight;
 
   NewsBannerWidget(this.bannerHeight);
@@ -83,37 +79,34 @@ class NewsBannerWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
-      child: Consumer<NewsHeaderModel>(
-          builder: (context, model, child) {
-            if (model.isBusy) {
-              return CupertinoActivityIndicator();
-            } else {
-              var banners = model?.list ?? [];
-              return Swiper(
-                loop: true,
-                autoplay: true,
-                autoplayDelay: 5000,
-                pagination: SwiperPagination(),
-                itemCount: banners.length,
-                itemBuilder: (context, index) {
-                  ComicNewsHeaderData data = banners[index];
-                  return InkWell(
-                    onTap: () {
-                      var banner = banners[index];
-                    },
-                    child: Image(
-                      fit: BoxFit.fill,
-                        image: NetworkImage(data.picUrl,
-                        headers: {"Referer": "http://v3api.dmzj.com/"})),
-                  );
+      child: Consumer<NewsHeaderModel>(builder: (context, model, child) {
+        if (model.isBusy) {
+          return CupertinoActivityIndicator();
+        } else {
+          var banners = model?.list ?? [];
+          return Swiper(
+            loop: true,
+            autoplay: true,
+            autoplayDelay: 5000,
+            pagination: SwiperPagination(),
+            itemCount: banners.length,
+            itemBuilder: (context, index) {
+              ComicNewsHeaderData data = banners[index];
+              return InkWell(
+                onTap: () {
+                  var banner = banners[index];
                 },
+                child: Image(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(data.picUrl,
+                        headers: {"Referer": "http://v3api.dmzj.com/"})),
               );
-            }
-          }
-      ),
+            },
+          );
+        }
+      }),
     );
   }
-
 }
 
 class NewsListWidget extends StatelessWidget {
@@ -125,28 +118,57 @@ class NewsListWidget extends StatelessWidget {
     }
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate((context, index) {
-        ComicNewsEntity entity = model.list[index];
-        return NewsItemWidget(entity);
-      },
-      childCount: model.list.length,
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          ComicNewsEntity entity = model.list[index];
+          return NewsItemWidget(entity);
+        },
+        childCount: model.list.length,
       ),
     );
   }
-
 }
 
 class NewsItemWidget extends StatelessWidget {
-
   ComicNewsEntity data;
   int index;
 
-  NewsItemWidget(this.data, {this.index})
-      : super(key: ValueKey(data.authorId));
+  NewsItemWidget(this.data, {this.index}) : super(key: ValueKey(data.authorId));
 
   @override
   Widget build(BuildContext context) {
-    return Text(data.title);
-  }
 
+    var format = new DateFormat('yyyy-MM-dd');
+
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        height: 90,
+        padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(data.title, maxLines: 2, style: TextStyle(fontSize: 15, color: Color(0xff333333)),),
+
+                SizedBox(height: 6,),
+                //data.createTime.toString()
+                Text(format.format(DateTime.fromMillisecondsSinceEpoch(data.createTime.toInt() * 1000)), style: TextStyle(fontSize: 12, color: Color(0xff999999)),),
+              ],
+            )),
+            Image(
+              width: 120,
+              height: 90,
+              fit: BoxFit.fill,
+              image: NetworkImage(data.rowPicUrl,
+                  headers: {"Referer": "http://v3api.dmzj.com/"}),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
