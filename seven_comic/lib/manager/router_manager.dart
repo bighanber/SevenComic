@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sevencomic/ui/detail/comic_detail_page.dart';
+import 'package:sevencomic/ui/detail/web_detail_page.dart';
 import 'package:sevencomic/ui/main/main_navigator.dart';
 import 'package:sevencomic/widget/page_route_anim.dart';
 
 class RouterName {
   static const String main = 'main';
   static const String comicDetail = "comicDetail";
+  static const String webDetail = "webDetail";
 }
 
 class Router {
@@ -17,6 +19,9 @@ class Router {
 
       case RouterName.comicDetail:
         return CupertinoPageRoute(builder: (_) => ComicDetailPage(settings.arguments as int));
+
+      case RouterName.webDetail:
+        return CupertinoPageRoute(builder: (_) => WebDetailPage(url: settings.arguments as String,));
 
       default:
         return CupertinoPageRoute(

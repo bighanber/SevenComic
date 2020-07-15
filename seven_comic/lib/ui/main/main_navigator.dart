@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sevencomic/manager/resource_mananger.dart';
 import 'package:sevencomic/ui/news/comic_news_page.dart';
 import 'package:sevencomic/ui/main/comic_shelf_page.dart';
 import 'package:sevencomic/ui/main/home_page.dart';
@@ -16,6 +17,13 @@ class _MainNavigator extends State<MainNavigator> {
   var _pageController = PageController();
   int _selectedIndex = 0;
   DateTime _lastPressed;
+
+  Image getTabImage(String path, int cur) {
+    if (cur == _selectedIndex) {
+      return Image.asset(ImageHelper.wrapAssets(path), width: 22, height: 22, color: Colors.green,);
+    }
+    return Image.asset(ImageHelper.wrapAssets(path), width: 22, height: 22,);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +51,12 @@ class _MainNavigator extends State<MainNavigator> {
           }),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.green,
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("首页")),
-          BottomNavigationBarItem(icon: Icon(Icons.toys), title: Text("书架")),
+          BottomNavigationBarItem(icon: getTabImage('ic_home.png', 0), title: Text("首页")),
+          BottomNavigationBarItem(icon: getTabImage('ic_shelf.png', 1), title: Text("书架")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.wb_incandescent), title: Text("资讯"))
+              icon: getTabImage('ic_discover.png', 2), title: Text("资讯"))
         ],
         currentIndex: _selectedIndex,
         onTap: (index) {

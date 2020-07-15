@@ -7,6 +7,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sevencomic/entity/comic_news_entity.dart';
 import 'package:sevencomic/entity/comic_news_header_entity.dart';
 import 'package:sevencomic/manager/provider_manager.dart';
+import 'package:sevencomic/manager/router_manager.dart';
 import 'package:sevencomic/provider/provider_widget.dart';
 import 'package:sevencomic/provider/view_state_widget.dart';
 import 'package:sevencomic/view_model/news_model.dart';
@@ -34,30 +35,36 @@ class _ComicNewsPage extends State<ComicNewsPage>
       },
       builder: (context, headModel, newsModel, child) {
         return Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                brightness: Theme.of(context).brightness == Brightness.light &&
-                        newsModel.isBusy
-                    ? Brightness.light
-                    : Brightness.dark,
-                actions: [],
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    height: bannerHeight,
-                    child: NewsBannerWidget(bannerHeight),
+          body: SmartRefresher(
+              controller: newsModel.refreshController,
+            enablePullUp: true,
+            onRefresh: newsModel.refresh,
+            onLoading: newsModel.loadMore,
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  brightness: Theme.of(context).brightness == Brightness.light &&
+                      newsModel.isBusy
+                      ? Brightness.light
+                      : Brightness.dark,
+                  actions: [],
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      height: bannerHeight,
+                      child: NewsBannerWidget(bannerHeight),
+                    ),
+                    centerTitle: true,
                   ),
-                  centerTitle: true,
+                  expandedHeight: bannerHeight,
+                  pinned: true,
                 ),
-                expandedHeight: bannerHeight,
-                pinned: true,
-              ),
-              if (newsModel.isEmpty)
-                SliverToBoxAdapter(
-                  child: Text("empty"),
-                ),
-              NewsListWidget(),
-            ],
+                if (newsModel.isEmpty)
+                  SliverToBoxAdapter(
+                    child: Text("empty"),
+                  ),
+                NewsListWidget(),
+              ],
+            ),
           ),
         );
       },
@@ -94,7 +101,8 @@ class NewsBannerWidget extends StatelessWidget {
               ComicNewsHeaderData data = banners[index];
               return InkWell(
                 onTap: () {
-                  var banner = banners[index];
+                  ComicNewsHeaderData banner = banners[index];
+                  Navigator.of(context).pushNamed(RouterName.webDetail, arguments: banner.objectUrl);
                 },
                 child: Image(
                     fit: BoxFit.fill,
@@ -114,7 +122,9 @@ class NewsListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     NewsModel model = Provider.of(context);
     if (model.isBusy) {
-      return ViewStateLoadingWidget();
+      return SliverToBoxAdapter(
+        child: ViewStateLoadingWidget(),
+      );
     }
 
     return SliverList(
@@ -141,7 +151,9 @@ class NewsItemWidget extends StatelessWidget {
     var format = new DateFormat('yyyy-MM-dd');
 
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).pushNamed(RouterName.webDetail, arguments: data.pageUrl);
+      },
       child: Container(
         height: 90,
         padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
