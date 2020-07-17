@@ -1,28 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:sevencomic/view_model/favourite_model.dart';
-import 'package:sevencomic/view_model/news_model.dart';
+import 'package:sevencomic/view_model/favorite_model.dart';
+import 'package:sevencomic/view_model/history_model.dart';
 import 'package:sevencomic/view_model/theme_model.dart';
 
-List<SingleChildWidget> providers = [
-  ...independentServices
-];
+List<SingleChildWidget> providers = [...independentServices];
 
 List<SingleChildWidget> independentServices = [
   ChangeNotifierProvider<ThemeModel>(
     create: (context) => ThemeModel(),
   ),
-  ChangeNotifierProvider<GlobalFavouriteStateModel>(
-    create: (context) => GlobalFavouriteStateModel(),
-  )
-];
-
-List<SingleChildWidget> mewsServices = [
-  ChangeNotifierProvider<NewsHeaderModel>(
-    create: (context) => NewsHeaderModel(),
+  ChangeNotifierProvider<GlobalFavoriteStateModel>(
+    create: (context) => GlobalFavoriteStateModel(),
   ),
-  ChangeNotifierProvider<NewsModel>(
-    create: (context) => NewsModel(),
+  ChangeNotifierProvider<GlobalHistoryStateModel>(
+    create: (context) => GlobalHistoryStateModel(),
   )
 ];

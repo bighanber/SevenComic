@@ -1,6 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:sevencomic/entity/favorite_entity.dart';
+import 'package:sevencomic/helper/database_helper.dart';
+import 'package:sevencomic/provider/view_state_refresh_list_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 
+class FavoriteModel extends ViewStateRefreshListModel {
+  List<FavoriteEntity> _favoriteList;
+
+  List<FavoriteEntity> get favoriteList => _favoriteList;
+
+  @override
+  Future<List> loadData({int pageNum}) async {
+    try {
+      DatabaseHelper helper = DatabaseHelper();
+
+      Future<Database> dbFuture = helper.initializeDatabase();
+      dbFuture.then((value) {
+        Future<List<FavoriteEntity>> listF = helper.getFavoriteList();
+        listF.then((value) {
+          setIdle();
+          _favoriteList = value;
+        });
+      });
+
+      return [];
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+}
+
+class GlobalFavoriteStateModel extends ChangeNotifier {
+  static final Map<String, bool> _map = Map();
+
+//  static refresh(List<HistoryEntity> list) {
+//    list.forEach((value) {
+//      if (_map.containsKey(value.comicId)) {
+//        _map[value.comicId] = value.collect;
+//      }
+//    });
+//  }
+
+  addFavorite(FavoriteEntity entity) {
+    DatabaseHelper helper = DatabaseHelper();
+    Future<Database> dbFuture = helper.initializeDatabase();
+    dbFuture.then((value) {
+      helper.insertFavorite(entity).then((value) {
+        notifyListeners();
+      });
+    });
+  }
+
+  cancelFavorite(String id) {
+    DatabaseHelper helper = DatabaseHelper();
+    Future<Database> dbFuture = helper.initializeDatabase();
+    dbFuture.then((value) {
+      helper.cancelFavorite(id).then((value) {
+        notifyListeners();
+      });
+    });
+  }
+}
 /// 我的收藏列表
 //class FavouriteListModel extends ViewStateRefreshListModel<Article> {
 //  LoginModel loginModel;
