@@ -4,7 +4,7 @@ import 'package:sevencomic/ui/news/comic_news_page.dart';
 import 'package:sevencomic/ui/shelf/comic_shelf_page.dart';
 import 'package:sevencomic/ui/main/home_page.dart';
 
-List<Widget> pages = <Widget>[HomePage(), ComicShelfPage(), ComicNewsPage()];
+List<Widget> pages = <Widget>[ComicShelfPage(), HomePage(), ComicNewsPage()];
 
 class MainNavigator extends StatefulWidget {
   @override

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sevencomic/provider/provider_widget.dart';
 import 'package:sevencomic/provider/view_state_widget.dart';
+import 'package:sevencomic/ui/shelf/history_list_item.dart';
 import 'package:sevencomic/view_model/history_model.dart';
 
 class ShelfHistoryPage extends StatefulWidget {
@@ -12,6 +14,9 @@ class ShelfHistoryPage extends StatefulWidget {
 
 class _ShelfHistoryPage extends State<ShelfHistoryPage>
     with AutomaticKeepAliveClientMixin {
+
+  int count = 0;
+
   @override
   Widget build(BuildContext context) {
     return ProviderWidget<HistoryModel>(
@@ -24,10 +29,21 @@ class _ShelfHistoryPage extends State<ShelfHistoryPage>
           }
 
           if (model.isEmpty || model.historyList.isEmpty) {
-            return Text('empty');
+            return Center(
+              child: Text("empty"),
+            );
           }
 
-          return Text('data');
+          return SmartRefresher(
+              controller: model.refreshController,
+            onRefresh: model.refresh,
+            child: ListView.builder(
+              itemCount: model.historyList.length,
+                itemBuilder: (context, index) {
+                  return HistoryItemWidget(model.historyList[index]);
+                }
+            ),
+          );
         },
         model: HistoryModel());
   }

@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sevencomic/entity/comic_detail_entity.dart';
+import 'package:sevencomic/entity/history_entity.dart';
 import 'package:sevencomic/provider/provider_widget.dart';
 import 'package:sevencomic/view_model/comic_detail_model.dart';
+import 'package:sevencomic/view_model/history_model.dart';
 
 class ComicDetailPage extends StatefulWidget {
   int comicId;
@@ -163,7 +165,7 @@ class DetailChapterWidget extends StatelessWidget {
                   crossAxisSpacing: 10,
                   childAspectRatio: 3),
               itemBuilder: (context, index) {
-                return ChapterItemWidget(model.detail.chapters[0].data[index]);
+                return ChapterItemWidget(model.detail.chapters[0].data[index], index: index,);
               }),
         ],
       ),
@@ -173,24 +175,42 @@ class DetailChapterWidget extends StatelessWidget {
 
 class ChapterItemWidget extends StatelessWidget {
   ComicDetailChaptersData itemData;
+  int index;
 
-  ChapterItemWidget(this.itemData) : super(key: ValueKey(itemData.chapterId));
+  ChapterItemWidget(this.itemData, {this.index}) : super(key: ValueKey(itemData.chapterId));
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Color(0xff999999), width: 0.5),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-        ),
-        child: Text(
-          itemData.chapterTitle,
-          style: TextStyle(fontSize: 14, color: Colors.black),
-          textAlign: TextAlign.center,
-        ),
-      ),
+    ComicDetailModel model = Provider.of(context);
+
+    return Consumer<GlobalHistoryStateModel>(
+        builder: (context, globalModel, child) {
+
+          return InkWell(
+            onTap: () {
+              globalModel.addHistory(HistoryEntity().fromJson({
+              'comicId' : model.detail.id.toString(),
+              'comicTitle' : model.detail.title,
+              'chapterId': itemData.chapterId,
+              'readChapter' : itemData.chapterTitle,
+              'latestChapter' : model.detail.chapters[0].data.first.chapterTitle,
+              'readTime' : "${DateTime.now()}",
+              'comicImg' : model.detail.cover
+              }));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Color(0xff999999), width: 0.5),
+                borderRadius: BorderRadius.all(Radius.circular(4)),
+              ),
+              child: Text(
+                itemData.chapterTitle,
+                style: TextStyle(fontSize: 14, color: Colors.black),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
     );
   }
 }

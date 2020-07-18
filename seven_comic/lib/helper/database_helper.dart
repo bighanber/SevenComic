@@ -13,15 +13,16 @@ class DatabaseHelper {
   String historyTable = "history_table";
   String favoriteTable = "favorite_table";
 
-  String colId = "comic_id";
-  String colTitle = "comic_title";
-  String colReadChapter = "read_chapter";
-  String colLatestChapter = "latest_chapter";
-  String colReadTime = "read_time";
-  String colImg = "comic_img";
+  String colId = "comicId";
+  String colTitle = "comicTitle";
+  String colChapterId = "chapterId";
+  String colReadChapter = "readChapter";
+  String colLatestChapter = "latestChapter";
+  String colReadTime = "readTime";
+  String colImg = "comicImg";
 
-  String colUpdate = "comic_update";
-  String colAddId = "favorite_add_id";
+  String colUpdate = "updateTime";
+  String colAddId = "addId";
 
   DatabaseHelper._createInstance();
 
@@ -37,25 +38,24 @@ class DatabaseHelper {
     if (_database == null) {
       _database = await initializeDatabase();
     }
-    
+
     return _database;
   }
-  
+
   Future<Database> initializeDatabase() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    String path = directory.path + 'comic.db';
-    
-    var comicDatabase = await openDatabase(path, version: 1, onCreate: _createDb);
+    String directory = await getDatabasesPath();
+    String path = directory + 'comic.db';
+
+    var comicDatabase = await openDatabase(path, version: 1, onCreate: (Database db, int newVersion) async {
+        await db.execute('CREATE TABLE $historyTable($colId TEXT PRIMARY KEY, $colTitle TEXT, $colChapterId TEXT, '
+            '$colReadChapter TEXT, $colLatestChapter TEXT, $colReadTime TEXT, $colImg TEXT)');
+
+        await db.execute('CREATE TABLE $favoriteTable($colId TEXT PRIMARY KEY, $colTitle TEXT, '
+            '$colReadChapter TEXT, $colLatestChapter TEXT, $colReadTime TEXT, $colImg TEXT, $colUpdate TEXT, $colAddId TEXT)');
+    });
     return comicDatabase;
   }
-  
-  void _createDb(Database db, int newVersion) async {
-    await db.execute('CREATE TABLE $historyTable($colId TEXT PRIMARY KEY, $colTitle TEXT, '
-        '$colReadChapter TEXT, $colLatestChapter TEXT, $colReadTime TEXT, $colImg TEXT)');
 
-    await db.execute('CREATE TABLE $favoriteTable($colId TEXT PRIMARY KEY, $colTitle TEXT, '
-        '$colReadChapter TEXT, $colLatestChapter TEXT, $colReadTime TEXT, $colImg TEXT, $colUpdate TEXT, $colAddId TEXT)');
-  }
 
   Future<List<Map<String, dynamic>>> getHistoryMapList() async {
     Database db = await this.database;
