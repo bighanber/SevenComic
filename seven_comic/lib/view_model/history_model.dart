@@ -9,6 +9,9 @@ class HistoryModel extends ViewStateRefreshListModel {
 
   List<HistoryEntity> get historyList => _historyList;
 
+  GlobalHistoryStateModel model;
+  HistoryModel({@required this.model});
+
   @override
   Future<List> loadData({int pageNum}) async {
     try {
@@ -28,10 +31,18 @@ class HistoryModel extends ViewStateRefreshListModel {
       throw Exception(e);
     }
   }
+
+  addHistory(HistoryEntity entity) {
+    model.addHistory(entity);
+  }
+
+  getHistoryById(String id, String chapterId) {
+    model.getHistoryById(id, chapterId);
+  }
 }
 
 class GlobalHistoryStateModel extends ChangeNotifier {
-  static final Map<String, bool> _map = Map();
+  Map<String, bool> readMap = Map();
 
 //  static refresh(List<HistoryEntity> list) {
 //    list.forEach((value) {
@@ -45,8 +56,32 @@ class GlobalHistoryStateModel extends ChangeNotifier {
     DatabaseHelper helper = DatabaseHelper();
     Future<Database> dbFuture = helper.initializeDatabase();
     dbFuture.then((value) {
-      helper.insertHistory(entity).then((value) {
-        notifyListeners();
+      helper.getHistoryById(entity.comicId).then((value) {
+        if (value.isEmpty) {
+          helper.insertHistory(entity).then((value) {
+            notifyListeners();
+          });
+        } else {
+          helper.updateHistory(entity).then((value) {
+            notifyListeners();
+          });
+        }
+      });
+    });
+  }
+
+  getHistoryById(String id, String chapterId) {
+    readMap.clear();
+    DatabaseHelper helper = DatabaseHelper();
+    Future<Database> dbFuture = helper.initializeDatabase();
+    dbFuture.then((value) {
+      helper.getHistoryById(id).then((value) {
+        if (value.isEmpty) {
+          notifyListeners();
+        } else if (value[0].chapterId == chapterId) {
+          readMap[chapterId] = true;
+          notifyListeners();
+        }
       });
     });
   }

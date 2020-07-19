@@ -84,6 +84,16 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<List<HistoryEntity>> getHistoryById(String id) async {
+    Database db = await this.database;
+    var result = await db.query(historyTable, where: '$colId = ?', whereArgs: [id]);
+    List<HistoryEntity> list = List();
+    result.forEach((element) {
+      list.add(HistoryEntity().fromJson(element));
+    });
+    return list;
+  }
+
   Future<int> updateHistory(HistoryEntity historyEntity) async {
     Database db = await this.database;
     var result = await db.update(historyTable, historyEntity.toJson(), where: '$colId = ?', whereArgs: [historyEntity.comicId]);

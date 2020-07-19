@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sevencomic/provider/provider_widget.dart';
 import 'package:sevencomic/provider/view_state_widget.dart';
@@ -45,7 +46,7 @@ class _ShelfHistoryPage extends State<ShelfHistoryPage>
             ),
           );
         },
-        model: HistoryModel());
+        model: HistoryModel(model: Provider.of(context, listen: false)));
   }
 
   @override

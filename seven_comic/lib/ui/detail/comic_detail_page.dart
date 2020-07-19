@@ -132,44 +132,50 @@ class DetailChapterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ComicDetailModel model = Provider.of(context);
-    return (model.detail.chapters.length > 0) ? Padding(
-      padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Text(
-                "全部章节(${model.detail.chapters[0].data.length})",
-                style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "升序",
-                  style: TextStyle(fontSize: 12, color: Color(0xff999999)),
+    return (model.detail.chapters.length > 0)
+        ? Padding(
+            padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Text(
+                      "全部章节(${model.detail.chapters[0].data.length})",
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "升序",
+                        style:
+                            TextStyle(fontSize: 12, color: Color(0xff999999)),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          GridView.builder(
-              shrinkWrap: true,
-              itemCount: model.detail.chapters[0].data.length,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 3),
-              itemBuilder: (context, index) {
-                return ChapterItemWidget(model.detail.chapters[0].data[index], index: index,);
-              }),
-        ],
-      ),
-    ) : Container();
+                GridView.builder(
+                    shrinkWrap: true,
+                    itemCount: model.detail.chapters[0].data.length,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        childAspectRatio: 3),
+                    itemBuilder: (context, index) {
+                      return ChapterItemWidget(
+                        model.detail.chapters[0].data[index],
+                        index: index,
+                      );
+                    }),
+              ],
+            ),
+          )
+        : Container();
   }
 }
 
@@ -177,40 +183,47 @@ class ChapterItemWidget extends StatelessWidget {
   ComicDetailChaptersData itemData;
   int index;
 
-  ChapterItemWidget(this.itemData, {this.index}) : super(key: ValueKey(itemData.chapterId));
+  ChapterItemWidget(this.itemData, {this.index})
+      : super(key: ValueKey(itemData.chapterId));
 
   @override
   Widget build(BuildContext context) {
     ComicDetailModel model = Provider.of(context);
+    GlobalHistoryStateModel historyStateModel = Provider.of(context);
 
-    return Consumer<GlobalHistoryStateModel>(
-        builder: (context, globalModel, child) {
+    return ProviderWidget<HistoryModel>(
+      model: HistoryModel(model: historyStateModel),
+      onModelReady: (his) {
+        his.getHistoryById(model.detail.id.toString(), itemData.chapterId.toString());
+      },
+      builder: (context, globalModel, child) {
+//          bool isRead = globalModel.getHistoryById(model.detail.id.toString(), itemData.chapterId.toString());
 
-          return InkWell(
-            onTap: () {
-              globalModel.addHistory(HistoryEntity().fromJson({
-              'comicId' : model.detail.id.toString(),
-              'comicTitle' : model.detail.title,
-              'chapterId': itemData.chapterId,
-              'readChapter' : itemData.chapterTitle,
-              'latestChapter' : model.detail.chapters[0].data.first.chapterTitle,
-              'readTime' : "${DateTime.now()}",
-              'comicImg' : model.detail.cover
-              }));
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Color(0xff999999), width: 0.5),
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-              ),
-              child: Text(
-                itemData.chapterTitle,
-                style: TextStyle(fontSize: 14, color: Colors.black),
-                textAlign: TextAlign.center,
-              ),
+        return InkWell(
+          onTap: () async {
+            globalModel.addHistory(HistoryEntity().fromJson({
+              'comicId': model.detail.id.toString(),
+              'comicTitle': model.detail.title,
+              'chapterId': itemData.chapterId.toString(),
+              'readChapter': itemData.chapterTitle,
+              'latestChapter': model.detail.chapters[0].data.first.chapterTitle,
+              'readTime': "${DateTime.now()}",
+              'comicImg': model.detail.cover
+            }));
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: historyStateModel.readMap.containsKey(itemData.chapterId.toString()) ? Colors.blue : Color(0xff999999), width: 0.5),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
-          );
-        }
+            child: Text(
+              itemData.chapterTitle,
+              style: TextStyle(fontSize: 14, color: historyStateModel.readMap.containsKey(itemData.chapterId.toString()) ? Colors.blue : Colors.black),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      },
     );
   }
 }

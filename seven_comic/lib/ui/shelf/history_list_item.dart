@@ -39,7 +39,6 @@ class HistoryItemWidget extends StatelessWidget {
                 ),
                 Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -53,6 +52,7 @@ class HistoryItemWidget extends StatelessWidget {
                         style:
                             TextStyle(fontSize: 12, color: Color(0xff999999)),
                       ),
+                      Expanded(child: SizedBox.shrink()),
                       Text(
                         data.readTime,
                         style:

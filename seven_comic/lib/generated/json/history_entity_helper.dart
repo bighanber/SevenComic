@@ -7,6 +7,9 @@ historyEntityFromJson(HistoryEntity data, Map<String, dynamic> json) {
 	if (json['comicTitle'] != null) {
 		data.comicTitle = json['comicTitle']?.toString();
 	}
+	if (json['chapterId'] != null) {
+		data.chapterId = json['chapterId']?.toString();
+	}
 	if (json['readChapter'] != null) {
 		data.readChapter = json['readChapter']?.toString();
 	}
@@ -26,6 +29,7 @@ Map<String, dynamic> historyEntityToJson(HistoryEntity entity) {
 	final Map<String, dynamic> data = new Map<String, dynamic>();
 	data['comicId'] = entity.comicId;
 	data['comicTitle'] = entity.comicTitle;
+	data['chapterId'] = entity.chapterId;
 	data['readChapter'] = entity.readChapter;
 	data['latestChapter'] = entity.latestChapter;
 	data['readTime'] = entity.readTime;
