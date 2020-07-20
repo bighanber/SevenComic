@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sevencomic/entity/comic_detail_entity.dart';
 import 'package:sevencomic/entity/history_entity.dart';
+import 'package:sevencomic/manager/router_manager.dart';
 import 'package:sevencomic/provider/provider_widget.dart';
 import 'package:sevencomic/view_model/comic_detail_model.dart';
 import 'package:sevencomic/view_model/history_model.dart';
@@ -197,10 +198,10 @@ class ChapterItemWidget extends StatelessWidget {
         his.getHistoryById(model.detail.id.toString(), itemData.chapterId.toString());
       },
       builder: (context, globalModel, child) {
-//          bool isRead = globalModel.getHistoryById(model.detail.id.toString(), itemData.chapterId.toString());
 
         return InkWell(
           onTap: () async {
+            globalModel.addReadMap(itemData.chapterId.toString());
             globalModel.addHistory(HistoryEntity().fromJson({
               'comicId': model.detail.id.toString(),
               'comicTitle': model.detail.title,
@@ -210,6 +211,7 @@ class ChapterItemWidget extends StatelessWidget {
               'readTime': "${DateTime.now()}",
               'comicImg': model.detail.cover
             }));
+            Navigator.of(context).pushNamed(RouterName.read, arguments: [model.detail.id.toString(), itemData.chapterId.toString()]);
           },
           child: Container(
             decoration: BoxDecoration(

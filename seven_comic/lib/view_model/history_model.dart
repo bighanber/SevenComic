@@ -39,6 +39,10 @@ class HistoryModel extends ViewStateRefreshListModel {
   getHistoryById(String id, String chapterId) {
     model.getHistoryById(id, chapterId);
   }
+
+  addReadMap(String chapterId) {
+    model.addReadMap(chapterId);
+  }
 }
 
 class GlobalHistoryStateModel extends ChangeNotifier {
@@ -51,6 +55,11 @@ class GlobalHistoryStateModel extends ChangeNotifier {
 //      }
 //    });
 //  }
+
+  addReadMap(String chapterId) {
+    readMap.clear();
+    readMap[chapterId] = true;
+  }
 
   addHistory(HistoryEntity entity) {
     DatabaseHelper helper = DatabaseHelper();

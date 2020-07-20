@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:sevencomic/entity/chapter_detail_entity.dart';
 import 'package:sevencomic/entity/comic_news.dart';
 import 'package:sevencomic/entity/comic_news_header_entity.dart';
 import 'package:sevencomic/entity/hot_search.dart';
@@ -88,6 +89,16 @@ class Repository {
     try {
       final response = await HttpUtils.get("v3/article/list/0/2/$page.json");
       var data = ComicNewsList.fromJson(response);
+      return ApiResponse.completed(data);
+    } on DioError catch (e) {
+      return ApiResponse.error(e.error);
+    }
+  }
+
+  static Future<ApiResponse<ChapterDetailEntity>> getChapterInfo(String comicId, String chapterId) async {
+    try {
+      final response = await HttpUtils.get("chapter/$comicId/$chapterId.json");
+      var data = ChapterDetailEntity().fromJson(response);
       return ApiResponse.completed(data);
     } on DioError catch (e) {
       return ApiResponse.error(e.error);
