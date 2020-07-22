@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:sevencomic/manager/resource_mananger.dart';
@@ -45,6 +46,7 @@ class _ComicReadPage extends State<ComicReadPage> {
 
     DateTime curTime = DateTime.now();
     double progressValue = 0;
+    bool opVisible = false;
 
     return ProviderWidget<ChapterDetailModel>(
       onModelReady: (model) {
@@ -58,28 +60,42 @@ class _ComicReadPage extends State<ComicReadPage> {
         return Scaffold(
           body: Stack(
             children: [
-              PhotoViewGallery.builder(
-                builder: ((context, index) {
-                  return PhotoViewGalleryPageOptions(
-                    imageProvider:  NetworkImage(model.detail.pageUrl[index],
-                      headers: {"Referer": "http://v3api.dmzj.com/"},
-                    ),
-                    heroAttributes: PhotoViewHeroAttributes(tag: model.detail.pageUrl[index]),
-                  );
-                }),
-                itemCount: model.detail.pageUrl.length,
-                scrollDirection: Axis.horizontal,
-                loadingBuilder: (context, event) {
-                  return Center(
-                    child: ViewStateLoadingWidget(),
-                  );
-                },
-                pageController: _controller,
-                scrollPhysics: PageScrollPhysics(parent: BouncingScrollPhysics()),
-                onPageChanged: (index) {
-                  setState(() {
-                    curIndex = index;
-                  });
+              GestureDetector(
+                child: Container(
+                  child: PhotoViewGallery.builder(
+                    builder: ((context, index) {
+                      return PhotoViewGalleryPageOptions(
+                        imageProvider:  NetworkImage(model.detail.pageUrl[index],
+                          headers: {"Referer": "http://v3api.dmzj.com/"},
+                        ),
+                        heroAttributes: PhotoViewHeroAttributes(tag: model.detail.pageUrl[index]),
+                      );
+                    }),
+                    itemCount: model.detail.pageUrl.length,
+                    scrollDirection: Axis.horizontal,
+                    loadingBuilder: (context, event) {
+                      return Center(
+                        child: ViewStateLoadingWidget(),
+                      );
+                    },
+                    pageController: _controller,
+                    scrollPhysics: PageScrollPhysics(parent: BouncingScrollPhysics()),
+                    onPageChanged: (index) {
+                      setState(() {
+                        curIndex = index;
+                      });
+                    },
+                  ),
+                ),
+                onPanDown: (details) {
+                  print("x: ${details.globalPosition.dx} - y: ${details.globalPosition.dy}");
+                  int res = clickArea(details.globalPosition.dx);
+                  print("res: ${res}");
+                  if (res == 0) {
+                    opVisible = !opVisible;
+                    print("opVisible: ${opVisible}");
+                    model.notifyListeners();
+                  }
                 },
               ),
 
@@ -101,7 +117,9 @@ class _ComicReadPage extends State<ComicReadPage> {
 
               Align(
                 alignment: Alignment.topLeft,
-                child: Container(
+                child: Visibility(
+                  visible: opVisible,
+                    child: Container(
                   height: 80,
                   width: MediaQuery.of(context).size.width,
                   color: Colors.black87,
@@ -115,14 +133,16 @@ class _ComicReadPage extends State<ComicReadPage> {
                       ),
                     ],
                   ),
-                ),
+                )),
               ),
 
               Align(
                 alignment: Alignment.bottomLeft,
-                child: Container(
+                child: Visibility(
+                  visible: opVisible,
+                  child: Container(
                   height: 50,
-                  color: Colors.redAccent,
+                  color: Colors.black87,
                   child: Row(
                     children: [
                       SizedBox(width: 15,),
@@ -143,6 +163,7 @@ class _ComicReadPage extends State<ComicReadPage> {
                     ],
                   ),
                 ),
+                ),
               ),
             ],
           ),
@@ -150,5 +171,19 @@ class _ComicReadPage extends State<ComicReadPage> {
       },
       model: ChapterDetailModel(),
     );
+  }
+
+  int clickArea(double x) {
+    double width = MediaQuery.of(context).size.width;
+    double left = width / 3.0;
+    double mid = (2 * width) / 3.0;
+
+    if (x <= left) {
+      return -1;
+    } else if (x > left && x <= mid) {
+      return 0;
+    } else {
+      return 1;
+    }
   }
 }
