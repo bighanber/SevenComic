@@ -82,6 +82,7 @@ class RecommendSubItemWidget extends StatelessWidget {
                 children: [
                   Image(
                     fit: BoxFit.fill,
+                    height: 140,
                     image: NetworkImage(data.cover,
                         headers: {"Referer": "http://v3api.dmzj.com/"}),
                   ),

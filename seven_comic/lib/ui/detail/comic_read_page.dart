@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:sevencomic/entity/chapter_detail_entity.dart';
+import 'package:sevencomic/entity/comic_detail_entity.dart';
 import 'package:sevencomic/manager/resource_mananger.dart';
 import 'package:sevencomic/provider/provider_widget.dart';
 import 'package:sevencomic/provider/view_state_widget.dart';
@@ -11,9 +13,10 @@ import 'package:sevencomic/view_model/chapter_detail_model.dart';
 
 class ComicReadPage extends StatefulWidget {
   String comicId;
-  String chapterId;
+  int pos;
+  List<ComicDetailChaptersData> chapters;
 
-  ComicReadPage({@required this.comicId, this.chapterId});
+  ComicReadPage({@required this.comicId, this.pos, this.chapters});
 
   @override
   State<StatefulWidget> createState() {
@@ -25,6 +28,7 @@ class _ComicReadPage extends State<ComicReadPage> {
   PageController _controller = new PageController();
   int curIndex = 0;
   String netInfo;
+  bool opVisible = true;
 
   @override
   void initState() {
@@ -45,23 +49,22 @@ class _ComicReadPage extends State<ComicReadPage> {
   Widget build(BuildContext context) {
 
     DateTime curTime = DateTime.now();
-    double progressValue = 0;
-    bool opVisible = false;
+    int curChapter = widget.pos;
 
     return ProviderWidget<ChapterDetailModel>(
       onModelReady: (model) {
-        model.loadData(widget.comicId, widget.chapterId);
+        model.loadData(widget.comicId, widget.chapters[widget.pos].chapterId.toString());
       },
       builder: (context, model, child) {
         if (model.isBusy) {
+          curIndex = 0;
           return ViewStateLoadingWidget();
         }
 
         return Scaffold(
           body: Stack(
             children: [
-              GestureDetector(
-                child: Container(
+                 Container(
                   child: PhotoViewGallery.builder(
                     builder: ((context, index) {
                       return PhotoViewGalleryPageOptions(
@@ -87,17 +90,6 @@ class _ComicReadPage extends State<ComicReadPage> {
                     },
                   ),
                 ),
-                onPanDown: (details) {
-                  print("x: ${details.globalPosition.dx} - y: ${details.globalPosition.dy}");
-                  int res = clickArea(details.globalPosition.dx);
-                  print("res: ${res}");
-                  if (res == 0) {
-                    opVisible = !opVisible;
-                    print("opVisible: ${opVisible}");
-                    model.notifyListeners();
-                  }
-                },
-              ),
 
               Align(
                 alignment: Alignment.bottomRight,
@@ -146,7 +138,17 @@ class _ComicReadPage extends State<ComicReadPage> {
                   child: Row(
                     children: [
                       SizedBox(width: 15,),
-                      Text("上一话", style: TextStyle(color: Colors.white),),
+                      InkWell(
+                        onTap: () {
+                          if (curChapter == widget.chapters.length - 1) {
+                            print("没有更多了");
+                          } else {
+                            curChapter += 1;
+                            model.loadData(widget.comicId, widget.chapters[curChapter].chapterId.toString());
+                          }
+                        },
+                        child: Text("上一话", style: TextStyle(color: Colors.white),),
+                      ),
                       Expanded(child: Slider(
                           min: 0.0,
                           max: model.detail.picnum.toDouble(),
@@ -158,7 +160,17 @@ class _ComicReadPage extends State<ComicReadPage> {
                             });
 
                           })),
-                      Text("下一话", style: TextStyle(color: Colors.white),),
+                      InkWell(
+                        onTap: () {
+                          if (curChapter == 0) {
+                            print("已经是最新的咯~");
+                          } else {
+                            curChapter -= 1;
+                            model.loadData(widget.comicId, widget.chapters[curChapter].chapterId.toString());
+                          }
+                        },
+                        child: Text("下一话", style: TextStyle(color: Colors.white),),
+                      ),
                       SizedBox(width: 15,),
                     ],
                   ),

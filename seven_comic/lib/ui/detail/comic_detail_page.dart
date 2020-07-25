@@ -5,6 +5,7 @@ import 'package:sevencomic/entity/comic_detail_entity.dart';
 import 'package:sevencomic/entity/history_entity.dart';
 import 'package:sevencomic/manager/router_manager.dart';
 import 'package:sevencomic/provider/provider_widget.dart';
+import 'package:sevencomic/provider/view_state_widget.dart';
 import 'package:sevencomic/view_model/comic_detail_model.dart';
 import 'package:sevencomic/view_model/history_model.dart';
 
@@ -32,7 +33,7 @@ class _ComicDetailPage extends State<ComicDetailPage> {
       builder: (context, detailModel, child) {
         return Scaffold(
           body: detailModel.isBusy
-              ? Text("loading")
+              ? ViewStateLoadingWidget()
               : CustomScrollView(
                   slivers: [
                     SliverToBoxAdapter(),
@@ -211,7 +212,7 @@ class ChapterItemWidget extends StatelessWidget {
               'readTime': "${DateTime.now()}",
               'comicImg': model.detail.cover
             }));
-            Navigator.of(context).pushNamed(RouterName.read, arguments: [model.detail.id.toString(), itemData.chapterId.toString()]);
+            Navigator.of(context).pushNamed(RouterName.read, arguments: [model.detail.id.toString(), index, model.detail.chapters[0].data]);
           },
           child: Container(
             decoration: BoxDecoration(

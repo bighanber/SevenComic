@@ -27,7 +27,7 @@ class Router {
 
       case RouterName.read:
         var list = settings.arguments as List;
-        return CupertinoPageRoute(builder: (_) => ComicReadPage(comicId: list[0] as String, chapterId: list[1] as String,));
+        return CupertinoPageRoute(builder: (_) => ComicReadPage(comicId: list[0] as String, pos: list[1] as int, chapters: list[2] as List));
 
       default:
         return CupertinoPageRoute(
